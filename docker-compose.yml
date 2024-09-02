@@ -1,0 +1,53 @@
+services:
+  proxy:
+    image: nginx:latest
+    ports:      
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./ProxyServers/Nginx/nginx.conf:/etc/nginx/nginx.conf
+    secrets:
+      - nginx.cert
+      - nginx.key
+      - dhparam.pem
+    stdin_open: true
+    tty: true
+    depends_on:
+      - ngwebui
+      - apiapp
+
+  ngwebui:
+    image: ${DOCKER_REGISTRY-}pocorchestrationngwebui
+    build:
+      context: ./ngwebui
+      dockerfile: dockerfile
+    environment:
+      ENV: "dockered-nginx"
+    volumes:      
+      - "./ngwebui:/app"
+      - alpine-node-modules:/app/node_modules
+    depends_on:
+      - apiapp
+
+  apiapp:
+    image: ${DOCKER_REGISTRY-}apiapp
+    build:
+      context: .
+      dockerfile: ApiApp/Dockerfile
+
+  orchestrator:
+    image: ${DOCKER_REGISTRY-}orchestrator
+    build:
+      context: .
+      dockerfile: Orchestrator/Dockerfile
+
+secrets:
+  nginx.cert: 
+    file: ./ProxyServers/Certificates/selfsigned.crt
+  nginx.key: 
+    file: ./ProxyServers/Certificates/selfsigned.key
+  dhparam.pem:
+    file: ./ProxyServers/Certificates/dhparam.pem
+
+volumes:
+  alpine-node-modules:
