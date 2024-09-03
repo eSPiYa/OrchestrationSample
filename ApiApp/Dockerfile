@@ -12,6 +12,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["ApiApp/ApiApp.csproj", "ApiApp/"]
+COPY ["Orchestrator.Common/Orchestrator.Common.csproj", "Orchestrator.Common/"]
 RUN dotnet restore "./ApiApp/ApiApp.csproj"
 COPY . .
 WORKDIR "/src/ApiApp"
