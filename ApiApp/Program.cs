@@ -1,7 +1,10 @@
 using ApiApp.Hubs;
+using ApiApp.Services;
 using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
 
 // Add services to the container.
 
@@ -14,6 +17,8 @@ builder.Services.AddSignalR()
                 {
                     options.Configuration.ChannelPrefix = RedisChannel.Literal("signalr");
                 });
+
+builder.Services.AddTransient<WebApiService>();
 
 var app = builder.Build();
 

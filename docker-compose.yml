@@ -44,6 +44,12 @@ services:
     build:
       context: .
       dockerfile: ApiApp/Dockerfile
+    environment:
+      - ASPNETCORE_HTTP_PORTS=8080
+      - redis__server__host=redis
+      - orchestrator__url=http://orchestrator:8080
+      - tmdb__api__key=${TMDB_API_KEY}
+      - tmdb__api__ReadAccessToken=${TMDB_API_READ_ACCESS_TOKEN}
     depends_on:
       redis:
         condition: service_healthy

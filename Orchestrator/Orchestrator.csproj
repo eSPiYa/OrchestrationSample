@@ -14,4 +14,8 @@
     <PackageReference Include="WorkflowCore" Version="3.10.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Orchestrator.Common\Orchestrator.Common.csproj" />
+  </ItemGroup>
+
 </Project>
