@@ -59,6 +59,15 @@ services:
     build:
       context: .
       dockerfile: Orchestrator/Dockerfile
+    environment:
+      - ASPNETCORE_HTTP_PORTS=8080
+      - redis__server__host=redis
+      - signalr__server__url=http://apiapp:8080
+      - tmdb__api__key=${TMDB_API_KEY}
+      - tmdb__api__ReadAccessToken=${TMDB_API_READ_ACCESS_TOKEN}
+    depends_on:
+      redis:
+        condition: service_healthy
 
 secrets:
   nginx.cert: 
