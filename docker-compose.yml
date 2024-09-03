@@ -29,8 +29,6 @@ services:
   pgdb:
     image: postgres
     restart: always
-    ports:
-      - "5432:5432"
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
@@ -40,8 +38,6 @@ services:
   pgadmin:
     image: dpage/pgadmin4
     restart: always
-    ports:
-      - "8888:80"
     environment:
       PGADMIN_DEFAULT_EMAIL: vdolosa@gmail.com
       PGADMIN_DEFAULT_PASSWORD: password
