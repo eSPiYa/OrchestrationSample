@@ -1,0 +1,8 @@
+services:
+  apiapp:
+    deploy:
+      replicas: 2
+
+  orchestrator:
+    deploy:
+      replicas: 2
