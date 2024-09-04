@@ -11,7 +11,13 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "ngwebui", "ngwebui\ngwebui.esproj", "{FF68AEA5-C847-4FF4-8301-FC7C45DF8616}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orchestrator.Common", "Orchestrator.Common\Orchestrator.Common.csproj", "{8919AECB-7B10-4068-9E9C-E0077BFAC888}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orchestrator.Common", "Orchestrator.Common\Orchestrator.Common.csproj", "{8919AECB-7B10-4068-9E9C-E0077BFAC888}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{79E14312-86D7-40FC-A7B0-1919A218768C}"
+	ProjectSection(SolutionItems) = preProject
+		DIAGRAM.mmd = DIAGRAM.mmd
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
