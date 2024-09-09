@@ -21,6 +21,8 @@ builder.Services.AddWorkflow(cfg =>
     cfg.UseRedisEventHub(redisHost, "orchestration");
 });
 
+builder.Services.InjectWorkFlowsAndSteps();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
