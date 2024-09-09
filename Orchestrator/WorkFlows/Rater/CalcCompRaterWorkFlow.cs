@@ -50,6 +50,10 @@ namespace Orchestrator.WorkFlows.Rater
                         {
                             // transform GenerateFileSaga.RequestResult to be sent back to the requester
                         })
+                        .Then(context =>
+                        {
+                            // send back the transformed data to the requester
+                        })
                             .OnError(WorkflowCore.Models.WorkflowErrorHandling.Retry, TimeSpan.FromSeconds(5))
                 )
                 .EndWorkflow();
