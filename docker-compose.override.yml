@@ -4,7 +4,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
     #ports:
-    #  - "8080"
+    #  - "9999:8080"
 
   orchestrator:
     environment:

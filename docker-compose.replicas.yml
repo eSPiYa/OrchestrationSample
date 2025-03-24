@@ -1,8 +1,12 @@
 services:
+  ngwebui:
+    deploy:
+      replicas: 5
+      
   apiapp:
     deploy:
-      replicas: 2
+      replicas: 5
 
   orchestrator:
     deploy:
-      replicas: 2
+      replicas: 5

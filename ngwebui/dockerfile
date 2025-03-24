@@ -20,4 +20,4 @@ COPY . /app
 EXPOSE 4200
 
 # start app
-CMD ng serve --configuration="${ENV}" --host 0.0.0.0 --poll 100 --ssl
+CMD ng serve --configuration="${ENV}" --host 0.0.0.0 --poll 100 #--ssl

@@ -1,20 +1,42 @@
 services:
+  #proxy:
+  #  image: nginx:latest
+  #  ports:      
+  #    - "8080:80"
+  #    - "8081:443"
+  #  volumes:
+  #    - ./ProxyServers/Nginx/nginx.conf:/etc/nginx/nginx.conf
+  #  secrets:
+  #    - nginx.cert
+  #    - nginx.key
+  #    - dhparam.pem
+  #  stdin_open: true
+  #  tty: true
+  #  depends_on:
+  #    - ngwebui
+  #    - apiapp
+
   proxy:
-    image: nginx:latest
-    ports:      
-      - "80:80"
-      - "443:443"
+    image: traefik:latest
+    command:
+      - --log.level=INFO
+      - --accesslog=true
+      - --api.insecure=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+    ports:
+      - "5555:80"
+      - "5050:8080"
     volumes:
-      - ./ProxyServers/Nginx/nginx.conf:/etc/nginx/nginx.conf
-    secrets:
-      - nginx.cert
-      - nginx.key
-      - dhparam.pem
-    stdin_open: true
-    tty: true
-    depends_on:
-      - ngwebui
-      - apiapp
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+        tag: "traefik"
 
   redis:
     image: redis:alpine
@@ -28,11 +50,28 @@ services:
 
   ngwebui:
     image: ${DOCKER_REGISTRY-}ngwebui
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ngwebui-router.rule=PathPrefix(`/`)"
+      - "traefik.http.routers.ngwebui-router.entrypoints=web"
+      - "traefik.http.services.ngwebui.loadbalancer.server.port=4200"
+      
+      # CSP Middleware
+      - "traefik.http.routers.ngwebui.middlewares=csp-headers"
+      - "traefik.http.middlewares.csp-headers.headers.contentsecuritypolicy=default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'"
+      - "traefik.http.middlewares.csp-headers.headers.customresponseheaders.X-Frame-Options:DENY"
+      
+      # Security headers
+      - "traefik.http.middlewares.csp-headers.headers.browserxssfilter=true"
+      - "traefik.http.middlewares.csp-headers.headers.customresponseheaders.X-Content-Type-Options:nosniff"
+      - "traefik.http.middlewares.csp-headers.headers.referrerpolicy=strict-origin-when-cross-origin"
     build:
       context: ./ngwebui
       dockerfile: dockerfile
     environment:
       ENV: "dockered-nginx"
+    #ports:
+    #  - "4200:4200"
     volumes:      
       - "./ngwebui:/app"
       - alpine-node-modules:/app/node_modules
@@ -44,6 +83,16 @@ services:
     build:
       context: .
       dockerfile: ApiApp/Dockerfile
+    labels:
+      - "traefik.enable=true"
+      # SignalR Hubs Configuration
+      - traefik.http.routers.hubs.entrypoints=web
+      - traefik.http.routers.hubs.rule=PathPrefix(`/hubs/`)
+      - traefik.http.services.hubs.loadbalancer.server.port=8080
+      - traefik.http.services.hubs.loadbalancer.sticky=true
+      - traefik.http.services.hubs.loadbalancer.sticky.cookie.name=signalr_sticky
+      - "traefik.http.services.hubs.loadbalancer.sticky.cookie.secure=false"
+      - "traefik.http.services.hubs.loadbalancer.sticky.cookie.httpOnly=true"
     environment:
       - ASPNETCORE_HTTP_PORTS=8080
       - redis__server__host=redis
